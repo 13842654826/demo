@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>输入框状态控制器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .container {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin: 20px 0;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input:disabled {
+            background-color: #f5f5f5;
+            color: #999;
+        }
+        input[readonly] {
+            background-color: #f0f8ff;
+            color: #666;
+        }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            flex: 1;
+            min-width: 100px;
+        }
+        .disable-btn {
+            background-color: #ff6b6b;
+            color: white;
+        }
+        .readonly-btn {
+            background-color: #4ecdc4;
+            color: white;
+        }
+        .hide-btn {
+            background-color: #9c27b0;
+            color: white;
+        }
+        .reset-btn {
+            background-color: #42a5f5;
+            color: white;
+        }
+        .status {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>输入框状态控制器</h1>
+
+    <div class="input-group">
+        <label for="password">密码</label>
+        <input type="password" id="textInput" placeholder="请输入密码...">
+    </div>
+    <div class="input-group">
+        <label for="tel">电话号码</label>
+    <input
+            type="text"
+            id="phone"
+            class="input-control"
+            placeholder="请输入11位手机号"
+
+
+    >
+    </div>
+    <div class="button-group">
+        <button class="disable-btn" id="disableBtn">禁用输入框</button>
+        <button class="readonly-btn" id="readonlyBtn">设为只读</button>
+        <button class="hide-btn" id="hideBtn">隐藏输入框</button>
+        <button class="reset-btn" id="resetBtn">还原状态</button>
+    </div>
+
+    <div class="status">
+        <strong>当前状态:</strong> <span id="statusText">正常状态</span>
+    </div>
+</div>
+
+<script>
+    // 获取DOM元素
+    const textInput = document.getElementById('textInput');
+    const disableBtn = document.getElementById('disableBtn');
+    const readonlyBtn = document.getElementById('readonlyBtn');
+    const hideBtn = document.getElementById('hideBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const statusText = document.getElementById('statusText');
+
+    // 更新状态显示
+    function updateStatus() {
+        if (textInput.style.display === 'none') {
+            statusText.textContent = "已隐藏";
+        } else if (textInput.disabled) {
+            statusText.textContent = "已禁用";
+        } else if (textInput.readOnly) {
+            statusText.textContent = "只读模式";
+        } else {
+            statusText.textContent = "正常状态";
+        }
+    }
+
+    // 禁用输入框
+    disableBtn.addEventListener('click', function() {
+        if (textInput.style.display === 'none') return;
+
+        textInput.disabled = !textInput.disabled;
+        textInput.readOnly = false;
+
+        // 更新按钮文本
+        disableBtn.textContent = textInput.disabled ? "启用输入框" : "禁用输入框";
+
+        updateStatus();
+    });
+
+    // 设为只读
+    readonlyBtn.addEventListener('click', function() {
+        if (textInput.style.display === 'none') return;
+
+        textInput.readOnly = !textInput.readOnly;
+        textInput.disabled = false;
+
+        // 更新按钮文本
+        readonlyBtn.textContent = textInput.readOnly ? "取消只读" : "设为只读";
+
+        updateStatus();
+    });
+
+    // 隐藏输入框
+    hideBtn.addEventListener('click', function() {
+        if (textInput.style.display === 'none') {
+            textInput.style.display = 'block';
+            hideBtn.textContent = "隐藏输入框";
+        } else {
+            textInput.style.display = 'none';
+            hideBtn.textContent = "显示输入框";
+        }
+
+        updateStatus();
+    });
+
+    // 还原状态
+    resetBtn.addEventListener('click', function() {
+        // 重置所有状态
+        textInput.disabled = false;
+        textInput.readOnly = false;
+        textInput.style.display = 'block';
+
+        // 重置按钮文本
+        disableBtn.textContent = "禁用输入框";
+        readonlyBtn.textContent = "设为只读";
+        hideBtn.textContent = "隐藏输入框";
+
+        updateStatus();
+    });
+
+    // 初始化状态显示
+    updateStatus();
+</script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>表单元素展示与动态控制</title>
+    <!-- 引入 TinyMCE 富文本编辑器 -->
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1, h2 {
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .readonly {
+            background-color: #f5f5f5;
+            color: #666;
+        }
+        .disabled {
+            background-color: #eee;
+            color: #999;
+        }
+        .output {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        dl {
+            margin: 10px 0;
+        }
+        dt {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        dd {
+            margin-left: 20px;3
+        }
+        .editable {
+            border: 1px solid #ddd;
+            padding: 10px;
+            min-height: 100px;
+            margin-bottom: 20px;
+        }
+        .control-panel {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 8px 15px;
+            margin: 5px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+
+<div class="form-group" id="password-group">
+    <!-- 密码输入框，内容会被隐藏显示 -->
+    <label for="password">密码输入框 (type="password")</label>
+    <input type="password" id="password" placeholder="请输入密码" minlength="6" required>
+</div>
+
+<div class="form-group" id="text-group">
+    <!-- 普通文本输入框，用于输入单行文本 -->
+    <label for="text">单行普通文本 (type="text")</label>
+    <input type="text" id="text" placeholder="请输入文本">
+</div>
+
+<div class="form-group" id="email-group">
+    <!-- 邮箱输入框，浏览器会自动验证格式 -->
+    <label for="email">电子邮件地址 (type="email")</label>
+    <input
+            type="text"
+            id="email"
+            class="input-control"
+            placeholder="例：user@example.com"
+            oninput="checkEmail()"
+    >
+    <span id="email-tip" class="tip default">请输入邮箱</span>
+</div>
+
+<div class="form-group" id="tel-group">
+    <!-- 电话输入框，限制11位数字 -->
+    <label for="tel">电话号码 (type="tel")</label>
+    <input
+            type="text"
+            id="phone"
+            class="input-control"
+            placeholder="请输入11位手机号"
+
+            oninput="checkPhone()"
+    >
+    <span id="phone-tip" class="tip default">0/11位</span>
+</div>
+
+<div class="form-group" id="number-group">
+    <!-- 数字输入框，只能输入数字 -->
+    <label for="number">数字输入框 (type="number")</label>
+    <input type="number" id="number" placeholder="请输入数字" min="0" max="100" step="1">
+</div>
+
+<div class="form-group" id="search-group">
+    <!-- 搜索框，通常带有清除按钮 -->
+    <label for="search">搜索框 (type="search")</label>
+    <input type="search" id="search" placeholder="搜索...">
+</div>
+
+<div class="form-group" id="url-group">
+    <!-- URL输入框，验证URL格式 -->
+    <label for="url">URL输入框 (type="url")</label>
+    <input
+            type="text"
+            id="url"
+            class="input-control"
+            placeholder="例：https://example.com"
+            oninput="checkUrl()"
+    >
+    <span id="url-tip" class="tip default">请输入URL</span></div>
+
+<div class="form-group" id="time-group">
+    <!-- 时间选择器 -->
+    <label for="time">时间输入框 (type="time")</label>
+    <input type="time" id="time">
+</div>
+
+<div class="form-group" id="date-group">
+    <!-- 日期选择器 -->
+    <label for="date">日期输入框 (type="date")</label>
+    <input type="date" id="date">
+</div>
+
+<div class="form-group" id="datetime-local-group">
+    <!-- 日期时间选择器，选择具体时间点 -->
+    <label for="datetime-local">日期时间输入框 (type="datetime-local")</label>
+    <input type="datetime-local" id="datetime-local">
+</div>
+
+<div class="form-group" id="month-group">
+    <!-- 年月选择器 -->
+    <label for="month">年月选择器 (type="month")</label>
+    <input type="month" id="month">
+</div>
+
+<div class="form-group" id="week-group">
+    <!-- 周选择器 -->
+    <label for="week">周选择器 (type="week")</label>
+    <input type="week" id="week">
+</div>
+
+<h2>多行文本区域</h2>
+
+<div class="form-group" id="textarea-group">
+    <!-- 多行文本输入区域 -->
+    <label for="textarea">文本区域 (textarea)</label>
+    <textarea id="textarea" rows="4" placeholder="请输入多行文本"></textarea>
+</div>
+
+<h2>富文本编辑器</h2>
+
+<div class="form-group" id="rich-editor-group">
+    <!-- 富文本编辑器，需要引入TinyMCE库 -->
+    <label for="rich-editor">富文本编辑器</label>
+    <textarea id="rich-editor"></textarea>
+    <div>注意：此功能需要引入TinyMCE库才能正常工作</div>
+</div>
+
+<h2>HTML5 自定义编辑区</h2>
+
+<div class="form-group" id="editable-group">
+    <!-- 可编辑区域，用户可以直接编辑内容 -->
+    <label>H5 自定义编辑区 (contenteditable="true")</label>
+    <div class="editable" contenteditable="true" id="editable-content">
+        <p>这是一个可编辑区域。你可以点击并编辑这里的文本。</p>
+        <p>尝试添加一些内容或修改现有文本。</p>
+    </div>
+</div>
+
+
+<!--<h2>输出元素</h2>-->
+
+<!--<div class="form-group" id="output-group">-->
+<!--    &lt;!&ndash; 输出元素，显示计算结果 &ndash;&gt;-->
+<!--    <label for="a">输入值 a:</label>-->
+<!--    <input type="number" id="a" value="5">-->
+
+<!--    <label for="b">输入值 b:</label>-->
+<!--    <input type="number" id="b" value="3">-->
+
+<!--    <label>计算结果 (output):</label>-->
+<!--    <output class="output" id="result">8</output>-->
+<!--</div>-->
+
+<!--<h2>描述列表</h2>-->
+
+<!--<dl>-->
+<!--    &lt;!&ndash; 描述列表，包含术语和描述 &ndash;&gt;-->
+<!--    <dt>HTML</dt>-->
+<!--    <dd>超文本标记语言，用于创建网页结构</dd>-->
+
+<!--    <dt>CSS</dt>-->
+<!--    <dd>层叠样式表，用于定义网页样式</dd>-->
+
+<!--    <dt>JavaScript</dt>-->
+<!--    <dd>脚本语言，用于实现网页交互功能</dd>-->
+<!--</dl>-->
+
+
+<!--<div class="form-group" id="html-elements-group">-->
+<!--    &lt;!&ndash; 标题元素，h1到h6 &ndash;&gt;-->
+<!--     <h1>一级标题 (h1)</h1>-->
+<!--    <h2>二级标题 (h2)</h2>-->
+<!--    <h3>三级标题 (h3)</h3>-->
+<!--    <h4>四级标题 (h4)</h4>-->
+<!--    <h5>五级标题 (h5)</h5>-->
+<!--    <h6>六级标题 (h6)</h6>-->
+
+<!--    &lt;!&ndash; 段落元素 &ndash;&gt;-->
+<!--    <p>这是一个段落 (p) 元素，用于包含文本内容。</p>-->
+
+<!--    &lt;!&ndash; 通用容器元素 &ndash;&gt;-->
+<!--    <div style="background-color: #f0f0f0; padding: 10px; margin: 10px 0;">-->
+<!--        这是一个 div 容器，常用于布局和样式分组。-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; 内联元素 &ndash;&gt;-->
+<!--    <span style="color: blue; font-weight: bold;">这是一个 span 元素，用于内联样式和文本标记。</span>-->
+<!--</div>-->
+
+<!--<div class="form-group" id="code-group">-->
+<!--    &lt;!&ndash; 预格式化文本 &ndash;&gt;-->
+<!--    <pre style="background-color: #f5f5f5; padding: 10px; border-radius: 4px;">-->
+<!--// 这是一个 pre 元素，保留文本格式-->
+<!--function helloWorld() {-->
+<!--    console.log("Hello, World!");-->
+<!--}-->
+<!--        </pre>-->
+
+<!--    &lt;!&ndash; 代码片段 &ndash;&gt;-->
+<!--    <code style="background-color: #f5f5f5; padding: 2px 4px; border-radius: 2px;">-->
+<!--        // 这是一个 code 元素，用于显示代码片段-->
+<!--        const x = 10;-->
+<!--    </code>-->
+
+<!--    音频;</br>-->
+<!--    <audio id="myAudio" controls>-->
+<!--        <source src="audio.mp3" type="audio/mp3">-->
+<!--    </audio>-->
+<!--    </br>-->
+<!--    视频: </br>-->
+<!--    <video id="myVideo" controls>-->
+<!--        <source src="movie.mp4" type="video/mp4">-->
+<!--    </video>-->
+<!--    </br>-->
+<!--    图片:</br><img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb" alt="山脉景观" width="400"-->
+<!--                   height="200">-->
+<!--</div>-->
+
+<script>
+    // 元素获取
+    const emailInput = document.getElementById('email');
+    const emailTip = document.getElementById('email-tip');
+    const phoneInput = document.getElementById('phone');
+    const phoneTip = document.getElementById('phone-tip');
+    const urlInput = document.getElementById('url');
+    const urlTip = document.getElementById('url-tip');
+
+    /**
+     * 1. Email实时校验（支持字母、数字、下划线、中划线、多级域名）
+     */
+    function checkEmail() {
+        const email = emailInput.value.trim();
+        const emailReg = /^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*\.[a-zA-Z]{2,6}$/;
+
+        if (email === '') {
+            emailTip.textContent = '请输入邮箱';
+            emailTip.className = 'tip default';
+        } else if (emailReg.test(email)) {
+            emailTip.textContent = '✅ 格式正确';
+            emailTip.className = 'tip success';
+        } else {
+            let errorMsg = '❌ 格式错误';
+            if (!email.includes('@')) errorMsg = '❌ 缺少@符号';
+            else if (email.startsWith('@') || email.endsWith('@')) errorMsg = '❌ @不能在首尾';
+            else if (!email.split('@')[1].includes('.')) errorMsg = '❌ 域名需含后缀';
+            emailTip.textContent = errorMsg;
+            emailTip.className = 'tip error';
+        }
+    }
+
+    /**
+     * 2. 电话实时校验（11位数字限制）
+     */
+    function checkPhone() {
+        const phone = phoneInput.value.trim();
+        const phoneReg = /^\d{11}$/; // 严格11位数字
+        const length = phone.length;
+
+        // 更新长度提示
+        phoneTip.textContent = `${length}/11位`;
+
+        if (length === 0) {
+            phoneTip.className = 'tip default';
+        } else if (length < 11) {
+            phoneTip.textContent = `❌ 需11位（当前${length}位）`;
+            phoneTip.className = 'tip error';
+        } else if (phoneReg.test(phone)) {
+            phoneTip.textContent = '✅ 格式正确';
+            phoneTip.className = 'tip success';
+        } else {
+            phoneTip.textContent = '❌ 仅支持数字';
+            phoneTip.className = 'tip error';
+        }
+    }
+
+    /**
+     * 3. URL实时校验（必须以http://或https://开头）
+     */
+    function checkUrl() {
+        const url = urlInput.value.trim();
+        const urlReg = /^https?:\/\/.+/; // 匹配http://或https://开头
+
+        if (url === '') {
+            urlTip.textContent = '请输入URL';
+            urlTip.className = 'tip default';
+        } else if (urlReg.test(url)) {
+            urlTip.textContent = '✅ 格式正确';
+            urlTip.className = 'tip success';
+        } else {
+            urlTip.textContent = '❌ 需以http://或https://开头';
+            urlTip.className = 'tip error';
+        }
+    }
+        tinymce.init({ selector: '#rich-editor' });
+</script>
+</body>
+</html>
