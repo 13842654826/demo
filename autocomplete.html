@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能填充表单 - 华为标准</title>
+    <style>
+        :root {
+            --primary-color: #0052d9;
+            --background-color: #f5f7fa;
+            --text-color: #333;
+            --border-color: #dcdfe6;
+            --success-color: #67c23a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "HarmonyOS Sans", "Helvetica Neue", Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-color), #1890ff);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 82, 217, 0.15);
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+        
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 1.4rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 82, 217, 0.2);
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background: #0042b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 82, 217, 0.3);
+        }
+        
+        .tip-box {
+            background: #f0f7ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .tip-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+        
+        .hint {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .autocomplete-tag {
+            display: inline-block;
+            background: #e6f7ff;
+            color: var(--primary-color);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 8px;
+            font-family: monospace;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>智能填充表单</h1>
+        <p class="subtitle">符合华为智能填充标准的H5表单</p>
+    </header>
+    
+    <main>
+        <section class="card">
+            <h2>个人信息</h2>
+            
+            <div class="tip-box">
+                <div class="tip-title">💡 智能填充提示</div>
+                <p>此表单已按照华为智能填充标准实现，在华为设备上点击输入框时，系统会自动识别字段类型并提供填充建议。</p>
+            </div>
+            
+            <form id="smartForm">
+                <div class="form-group">
+                    <label for="nickname">
+                        昵称
+                        <span class="autocomplete-tag">nickname</span>
+                    </label>
+                    <input type="text" id="nickname" name="nickname" autocomplete="nickname">
+                    <div class="hint">此字段支持智能填充昵称信息</div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="familyName">
+                            姓氏
+                            <span class="autocomplete-tag">family-name</span>
+                        </label>
+                        <input type="text" id="familyName" name="familyName" autocomplete="family-name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="givenName">
+                            名字
+                            <span class="autocomplete-tag">given-name</span>
+                        </label>
+                        <input type="text" id="givenName" name="givenName" autocomplete="given-name">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fullName">
+                        姓名
+                        <span class="autocomplete-tag">name</span>
+                    </label>
+                    <input type="text" id="fullName" name="fullName" autocomplete="name">
+                    <div class="hint">此字段支持智能填充完整姓名</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">
+                        手机号
+                        <span class="autocomplete-tag">tel-national</span>
+                    </label>
+                    <input type="tel" id="phone" name="phone" autocomplete="tel-national">
+                    <div class="hint">此字段支持智能填充手机号码</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">
+                        邮件地址
+                        <span class="autocomplete-tag">email</span>
+                    </label>
+                    <input type="email" id="email" name="email" autocomplete="email">
+                    <div class="hint">此字段支持智能填充电子邮件地址</div>
+                </div>
+            </form>
+        </section>
+        
+        <section class="card">
+            <h2>证件信息</h2>
+            
+            <form id="documentForm">
+                <div class="form-group">
+                    <label for="idCard">
+                        身份证号
+                        <span class="autocomplete-tag">id-card-number</span>
+                    </label>
+                    <input type="text" id="idCard" name="idCard" autocomplete="id-card-number">
+                    <div class="hint">此字段支持智能填充身份证号码</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="passport">
+                        护照号
+                        <span class="autocomplete-tag">passport-number</span>
+                    </label>
+                    <input type="text" id="passport" name="passport" autocomplete="passport-number">
+                    <div class="hint">此字段支持智能填充护照号码</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="validity">
+                        有效期至
+                        <span class="autocomplete-tag">validity</span>
+                    </label>
+                    <input type="date" id="validity" name="validity" autocomplete="validity">
+                    <div class="hint">此字段支持智能填充证件有效期</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="issueAt">
+                        签发地
+                        <span class="autocomplete-tag">issue-at</span>
+                    </label>
+                    <input type="text" id="issueAt" name="issueAt" autocomplete="issue-at">
+                    <div class="hint">此字段支持智能填充证件签发地</div>
+                </div>
+            </form>
+        </section>
+        
+        <section class="card">
+            <h2>地址与车辆信息</h2>
+            
+            <form id="addressForm">
+                <div class="form-group">
+                    <label for="streetAddress">
+                        地址
+                        <span class="autocomplete-tag">street-address</span>
+                    </label>
+                    <textarea id="streetAddress" name="streetAddress" rows="3" autocomplete="street-address"></textarea>
+                    <div class="hint">此字段支持智能填充完整地址信息</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="country">
+                        国籍
+                        <span class="autocomplete-tag">country</span>
+                    </label>
+                    <select id="country" name="country" autocomplete="country">
+                        <option value="">请选择国家</option>
+                        <option value="CN">中国</option>
+                        <option value="US">美国</option>
+                        <option value="JP">日本</option>
+                        <option value="KR">韩国</option>
+                        <option value="UK">英国</option>
+                    </select>
+                    <div class="hint">此字段支持智能填充国家信息</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="licensePlate">
+                        车牌号
+                        <span class="autocomplete-tag">license-plate</span>
+                    </label>
+                    <input type="text" id="licensePlate" name="licensePlate" autocomplete="license-plate">
+                    <div class="hint">此字段支持智能填充车牌号码</div>
+                </div>
+            </form>
+        </section>
+        
+        <section class="card">
+            <h2>组织与税务信息</h2>
+            
+            <form id="organizationForm">
+                <div class="form-group">
+                    <label for="organization">
+                        名称
+                        <span class="autocomplete-tag">organization</span>
+                    </label>
+                    <input type="text" id="organization" name="organization" autocomplete="organization">
+                    <div class="hint">此字段支持智能填充组织/公司名称</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="taxId">
+                        税号
+                        <span class="autocomplete-tag">tax-id</span>
+                    </label>
+                    <input type="text" id="taxId" name="taxId" autocomplete="tax-id">
+                    <div class="hint">此字段支持智能填充税务识别号</div>
+                </div>
+            </form>
+            
+            <button type="button" class="btn" id="submitBtn">提交表单</button>
+        </section>
+        
+        <section class="card">
+            <h2>智能填充说明</h2>
+            <p>此页面按照华为智能填充标准实现，每个输入字段都使用了正确的<code>autocomplete</code>属性值，确保在华为设备上能够正确触发智能填充功能。</p>
+            
+            <div class="tip-box">
+                <div class="tip-title">使用提示</div>
+                <p>在华为手机上，点击任意输入框时，键盘上方可能会出现智能填充提示，您可以选择自动填充已保存的信息。</p>
+            </div>
+            
+            <p>要启用此功能，请确保：</p>
+            <ul style="margin: 15px 0 15px 20px;">
+                <li>您的华为设备已登录华为账号</li>
+                <li>在"设置" → "隐私和安全" → "智能填充"中开启该功能</li>
+                <li>您已在系统中保存了相应的个人信息</li>
+            </ul>
+        </section>
+    </main>
+    
+    <footer>
+        <p>© 2025 智能填充表单 - 符合华为智能填充标准</p>
+        <p>本页面仅用于演示华为智能填充功能</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const submitBtn = document.getElementById('submitBtn');
+            
+            submitBtn.addEventListener('click', function() {
+                const nickname = document.getElementById('nickname').value;
+                if (!nickname) {
+                    alert('请至少填写昵称信息');
+                    return;
+                }
+                
+                alert('表单提交成功！\n\n在真实的应用中，您的信息将会被保存，并在下次需要时通过智能填充功能快速填写。');
+            });
+            
+            // 模拟智能填充提示
+            const inputs = document.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    console.log(`输入框 ${this.name} 获得焦点，autocomplete属性: ${this.autocomplete}`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
