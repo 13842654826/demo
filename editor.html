@@ -304,28 +304,28 @@
     const urlInput = document.getElementById('url');
     const urlTip = document.getElementById('url-tip');
 
-    /**
-     * 1. Email实时校验（支持字母、数字、下划线、中划线、多级域名）
-     */
-    function checkEmail() {
-        const email = emailInput.value.trim();
-        const emailReg = /^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*\.[a-zA-Z]{2,6}$/;
+<!--    /**-->
+<!--     * 1. Email实时校验（支持字母、数字、下划线、中划线、多级域名）-->
+<!--     */-->
+<!--    function checkEmail() {-->
+<!--        const email = emailInput.value.trim();-->
+<!--        const emailReg = /^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*\.[a-zA-Z]{2,6}$/;-->
 
-        if (email === '') {
-            emailTip.textContent = '请输入邮箱';
-            emailTip.className = 'tip default';
-        } else if (emailReg.test(email)) {
-            emailTip.textContent = '✅ 格式正确';
-            emailTip.className = 'tip success';
-        } else {
-            let errorMsg = '❌ 格式错误';
-            if (!email.includes('@')) errorMsg = '❌ 缺少@符号';
-            else if (email.startsWith('@') || email.endsWith('@')) errorMsg = '❌ @不能在首尾';
-            else if (!email.split('@')[1].includes('.')) errorMsg = '❌ 域名需含后缀';
-            emailTip.textContent = errorMsg;
-            emailTip.className = 'tip error';
-        }
-    }
+<!--        if (email === '') {-->
+<!--            emailTip.textContent = '请输入邮箱';-->
+<!--            emailTip.className = 'tip default';-->
+<!--        } else if (emailReg.test(email)) {-->
+<!--            emailTip.textContent = '✅ 格式正确';-->
+<!--            emailTip.className = 'tip success';-->
+<!--        } else {-->
+<!--            let errorMsg = '❌ 格式错误';-->
+<!--            if (!email.includes('@')) errorMsg = '❌ 缺少@符号';-->
+<!--            else if (email.startsWith('@') || email.endsWith('@')) errorMsg = '❌ @不能在首尾';-->
+<!--            else if (!email.split('@')[1].includes('.')) errorMsg = '❌ 域名需含后缀';-->
+<!--            emailTip.textContent = errorMsg;-->
+<!--            emailTip.className = 'tip error';-->
+<!--        }-->
+<!--    }-->
 
     /**
      * 2. 电话实时校验（11位数字限制）
@@ -352,24 +352,24 @@
         }
     }
 
-    /**
-     * 3. URL实时校验（必须以http://或https://开头）
-     */
-    function checkUrl() {
-        const url = urlInput.value.trim();
-        const urlReg = /^https?:\/\/.+/; // 匹配http://或https://开头
+<!--    /**-->
+<!--     * 3. URL实时校验（必须以http://或https://开头）-->
+<!--     */-->
+<!--    function checkUrl() {-->
+<!--        const url = urlInput.value.trim();-->
+<!--        const urlReg = /^https?:\/\/.+/; // 匹配http://或https://开头-->
 
-        if (url === '') {
-            urlTip.textContent = '请输入URL';
-            urlTip.className = 'tip default';
-        } else if (urlReg.test(url)) {
-            urlTip.textContent = '✅ 格式正确';
-            urlTip.className = 'tip success';
-        } else {
-            urlTip.textContent = '❌ 需以http://或https://开头';
-            urlTip.className = 'tip error';
-        }
-    }
+<!--        if (url === '') {-->
+<!--            urlTip.textContent = '请输入URL';-->
+<!--            urlTip.className = 'tip default';-->
+<!--        } else if (urlReg.test(url)) {-->
+<!--            urlTip.textContent = '✅ 格式正确';-->
+<!--            urlTip.className = 'tip success';-->
+<!--        } else {-->
+<!--            urlTip.textContent = '❌ 需以http://或https://开头';-->
+<!--            urlTip.className = 'tip error';-->
+<!--        }-->
+<!--    }-->
         tinymce.init({ selector: '#rich-editor' });
 </script>
 </body>
