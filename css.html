@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS干扰测试页</title>
+    <style>
+        /* ================= 基础样式 ================= */
+        :root { --bg: #f5f5f5; --text: #111; --card: #fff; --border: #ccc; }
+        body { background: var(--bg); color: var(--text); margin: 0; padding: 16px; font-family: system-ui, sans-serif; }
+        h1, h2 { margin: 16px 0 8px; }
+        p { margin: 4px 0 12px; line-height: 1.5; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 12px; }
+        .btn { padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; margin-right: 8px; background: #0066cc; color: #fff; }
+
+        /* ================= 干扰场景 1：系统暗色适配 ================= */
+        @media (prefers-color-scheme: dark) {
+          :root { --bg: #1a1a1a; --text: #e6e6e6; --card: #2a2a2a; --border: #444; }
+          .sys-dark { background: #121212 !important; color: #fff !important; }
+        }
+
+        /* ================= 干扰场景 2：!important 强覆盖 ================= */
+        .force-light { background-color: #ffffff !important; color: #000000 !important; }
+        .force-dark  { background-color: #0d1117 !important; color: #c9d1d9 !important; }
+
+        /* ================= 干扰场景 3：站点已自带反色滤镜 ================= */
+        .self-invert { filter: invert(1) hue-rotate(180deg); }
+
+        /* ================= 干扰场景 4：明确声明不受滤镜影响 ================= */
+        .exclude-filter { filter: none !important; background: #222; color: #eee; }
+
+        /* ================= 干扰场景 5：color-scheme 声明冲突 ================= */
+        .scheme-dark { color-scheme: only dark; background: #181818; color: #d0d0d0; }
+        .scheme-light { color-scheme: only light; background: #fafafa; color: #222; }
+
+        /* 动态注入样式容器 */
+        #dynamic-style { display: none; }
+    </style>
+</head>
+<body>
+<h1>🧪 自定义CSS干扰测试页</h1>
+<p>请开启/关闭ArkWeb夜间模式，观察下方区域的渲染优先级与算法容错。</p>
+<button class="btn" onclick="toggleSiteTheme()">🔄 切换站点自定义暗色</button>
+<button class="btn" style="background:#555" onclick="document.body.classList.toggle('force-light')">⚠️ 触发 !important 亮色覆盖</button>
+
+<div class="card">
+    <h2>1. 系统级暗色适配</h2>
+    <p class="sys-dark">跟随系统深色模式声明（@media prefers-color-scheme: dark）</p>
+    <p>若ArkWeb强制夜间模式，预期：应覆盖或融合系统媒体查询，而非出现双套背景色。</p>
+</div>
+
+<div class="card force-dark">
+    <h2>2. !important 强制暗色</h2>
+    <p>站点使用 <code>!important</code> 锁死深色背景与浅色文字。</p>
+    <p>测试点：ArkWeb注入的暗压样式优先级是否高于 <code>!important</code>，或是否智能降级。</p>
+</div>
+
+<div class="card self-invert">
+    <h2>3. 站点已自带 invert(1)</h2>
+    <p>页面元素已自行反色（常见于老旧阅读插件或第三方组件）。</p>
+    <p>测试点：开启夜间模式后，<strong>不应双重反色变回亮色</strong>。引擎应识别并跳过或应用 <code>invert(0)</code>。</p>
+</div>
+
+<div class="card exclude-filter">
+    <h2>4. filter: none 保护区域</h2>
+    <p>明确声明 <code>filter: none !important</code>，模拟地图/视频/验证码等需保留原色的区域。</p>
+    <p>测试点：ArkWeb应尊重此声明，不对其施加全局反色/暗压滤镜。</p>
+</div>
+
+<div class="card">
+    <h2>5. color-scheme 声明冲突</h2>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <div class="scheme-dark" style="flex:1; min-width:120px; padding:10px; border-radius:6px;">only dark</div>
+        <div class="scheme-light" style="flex:1; min-width:120px; padding:10px; border-radius:6px;">only light</div>
+    </div>
+    <p style="margin-top:8px;">测试浏览器对 <code>color-scheme</code> 的解析策略：夜间模式下是否强制覆盖，或保持声明状态。</p>
+</div>
+
+<script>
+    // 模拟站点动态切换主题
+    let isDark = false;
+    function toggleSiteTheme() {
+      isDark = !isDark;
+      const root = document.documentElement;
+      if (isDark) {
+        root.style.setProperty('--bg', '#0d1117');
+        root.style.setProperty('--text', '#c9d1d9');
+        root.style.setProperty('--card', '#161b22');
+        root.style.setProperty('--border', '#30363d');
+      } else {
+        root.style.setProperty('--bg', '#f5f5f5');
+        root.style.setProperty('--text', '#111');
+        root.style.setProperty('--card', '#fff');
+        root.style.setProperty('--border', '#ccc');
+      }
+    }
+</script>
+</body>
+</html>
